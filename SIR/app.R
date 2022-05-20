@@ -73,22 +73,56 @@ ui <- fluidPage(
         ),
 
         mainPanel(
-           plotOutput("distPlot")
+           plotOutput("trajektorie"),
+           plotOutput("stationarity")
         )
     )
 )
 
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-      SIR(input[['inputS']], input[['inputI']], input[['inputR']], 
-          input[['inputN']], input[['gamma']], input[['beta']], input[['step']],
-          input[['timeMax']]) -> wspolczynniki
-      plot(wspolczynniki$time, wspolczynniki$S, col = 'red', 
-           ylim = c(0,input[['inputN']]), type = 'l')
-      lines(wspolczynniki$time, wspolczynniki$I, col = 'green')
-      lines(wspolczynniki$time, wspolczynniki$R, col = 'blue')
+  
+    temp <- reactive({
+      SIR(input[['inputS']], 
+          input[['inputI']], 
+          input[['inputR']], 
+          input[['inputN']], 
+          input[['gamma']], 
+          input[['beta']], 
+          input[['step']],
+          input[['timeMax']])
     })
+
+    output$trajektorie <- renderPlot({
+      # SIR(input[['inputS']], 
+      #     input[['inputI']], 
+      #     input[['inputR']], 
+      #     input[['inputN']], 
+      #     input[['gamma']], 
+      #     input[['beta']], 
+      #     input[['step']],
+      #     input[['timeMax']]) -> wspolczynniki
+      plot(temp()[['time']], 
+           temp()[['S']], 
+           col = 'red', 
+           ylim = c(0,input[['inputN']]), 
+           type = 'l', 
+           xlab = "Czas", 
+           ylab = "Liczebność")
+      lines(temp()[['time']], 
+            temp()[['I']], 
+            col = 'green')
+      lines(temp()[['time']], 
+            temp()[['R']], 
+            col = 'blue')
+      legend("right", 
+             legend=c("S", "I", "R"),
+             col=c("red", "green", "blue"), lty=1:1, cex=0.8)
+    })
+    
+      output$stationarity <- renderPlot({
+        plot(temp()[['I']],
+             temp()[['S']])
+      })
 }
 
 shinyApp(ui = ui, server = server)
