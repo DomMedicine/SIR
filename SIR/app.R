@@ -1,4 +1,7 @@
 library(shiny)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
 
 SIR <- function(S0, I0, R0, N, gamma, beta, h, tmax){
   time <- seq(0, tmax, h)
@@ -23,7 +26,7 @@ ui <- fluidPage(
   
   tags$head(
     tags$meta(name="author", content="Dominik Nowakowski"),
-    tags$meta(name="creation_date", content="15/05/2022")
+    tags$meta(name="creation_date", content="22/05/2022")
   ),
 
     titlePanel("SIR model"),
@@ -73,8 +76,7 @@ ui <- fluidPage(
         ),
 
         mainPanel(
-           plotOutput("trajektorie"),
-           plotOutput("stationarity")
+           plotOutput("trajektorie", height = '700px')
         )
     )
 )
@@ -93,36 +95,16 @@ server <- function(input, output) {
     })
 
     output$trajektorie <- renderPlot({
-      # SIR(input[['inputS']], 
-      #     input[['inputI']], 
-      #     input[['inputR']], 
-      #     input[['inputN']], 
-      #     input[['gamma']], 
-      #     input[['beta']], 
-      #     input[['step']],
-      #     input[['timeMax']]) -> wspolczynniki
-      plot(temp()[['time']], 
-           temp()[['S']], 
-           col = 'red', 
-           ylim = c(0,input[['inputN']]), 
-           type = 'l', 
-           xlab = "Czas", 
-           ylab = "Liczebność")
-      lines(temp()[['time']], 
-            temp()[['I']], 
-            col = 'green')
-      lines(temp()[['time']], 
-            temp()[['R']], 
-            col = 'blue')
-      legend("right", 
-             legend=c("S", "I", "R"),
-             col=c("red", "green", "blue"), lty=1:1, cex=0.8)
+      temp() %>% 
+        pivot_longer(cols = 2:4) %>% 
+        ggplot(aes(time, value, color = name)) +
+        geom_line() +
+        theme_minimal() +
+        scale_x_continuous(name = 'time') + 
+        scale_y_continuous(name = 'value') +
+        scale_color_discrete(name = 'stan')
     })
     
-      output$stationarity <- renderPlot({
-        plot(temp()[['I']],
-             temp()[['S']])
-      })
 }
 
 shinyApp(ui = ui, server = server)
