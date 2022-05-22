@@ -1,0 +1,24 @@
+      # SIR(input[['inputS']], 
+      #     input[['inputI']], 
+      #     input[['inputR']], 
+      #     input[['inputN']], 
+      #     input[['gamma']], 
+      #     input[['beta']], 
+      #     input[['step']],
+      #     input[['timeMax']]) -> wspolczynniki
+      # plot(temp()[['time']], 
+      #      temp()[['S']], 
+      #      col = 'red', 
+      #      ylim = c(0,input[['inputN']]), 
+      #      type = 'l', 
+      #      xlab = "Czas", 
+      #      ylab = "Liczebność")
+      # lines(temp()[['time']], 
+      #       temp()[['I']], 
+      #       col = 'green')
+      # lines(temp()[['time']], 
+      #       temp()[['R']], 
+      #       col = 'blue')
+      # legend("right", 
+      #        legend=c("S", "I", "R"),
+      #        col=c("red", "green", "blue"), lty=1:1, cex=0.8)
